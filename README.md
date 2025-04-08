@@ -1,5 +1,7 @@
 # StReSSMAn
 Short read sequencing Somatic Mutation Analysis and Filtering
+This pipeline will map short read sequencing reads to a publicly available reference genome.
+After mapping, small somatic variants are called for experimental samples. 
 
 # Installation Guide
 
@@ -26,8 +28,8 @@ This tool is used for filtering SNP's after variant calling
 
 ## workflow testing
 In the TESTDATA dir is a testset with fastq data to test your installation. 
-If your installation is correct, you will be able to run this data set. 
-
+If your installation is correct, you will be able to run this data set by running:
+`./run_nextflow.sh`
 
 
 ## FASTQ processing
@@ -42,4 +44,5 @@ All reads are mapped against
 
 ## Variant Filtering
 
+[^]: Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair
 
