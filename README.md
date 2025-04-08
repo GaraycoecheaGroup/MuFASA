@@ -1,7 +1,8 @@
 # StReSSMAn
-Short read sequencing Somatic Mutation Analysis and Filtering
-This pipeline will map short read sequencing reads to a publicly available reference genome.
-After mapping, small somatic variants are called for experimental samples. 
+Short read sequencing Somatic Mutation Analysis and Filtering.
+This pipeline will map small sequencing reads to a publicly available reference genome with bwa-mem.
+After mapping, small somatic variants are called with Strelka and Mutect2. 
+SNV's and INDELs are filtered on quality by several filters. 
 
 # Installation Guide
 
@@ -29,7 +30,12 @@ This tool is used for filtering SNP's after variant calling
 ## workflow testing
 In the TESTDATA dir is a testset with fastq data to test your installation. 
 If your installation is correct, you will be able to run this data set by running:
+
 `./run_nextflow.sh`
+
+### workflow output
+
+
 
 
 ## FASTQ processing
