@@ -35,12 +35,31 @@ If your installation is correct, you will be able to run this data set by runnin
 
 ### workflow output
 
-
+|   File                       |   location        |   output                                                      | 
+|------------------------------|-------------------|---------------------------------------------------------------|
+| *.fastqc.html                | ../FASTQC/        | Quality control checks on raw sequence data                   |
+| *_collect_align_metrics.txt  | ../FASTQC/        | Quality metrics for illimina read alignments                  |
+| *_collect_wgs_metrics.txt    | ../FASTQC/        | Metrics about coverage and performance of (WGS) mapping       |
+| *_samtools_markdup.(bam/bai) | ../MAPPING/       | Read mapping output                                           |
+| *.somatic.snvs & indel.vcf   | ../Strelka/       | Strelka somatic SNV's  and InDel variants                     |
+| *_Mutect.snvs & indel.vcf    | ../Mutect/        | Mutect2 somatic SNV's and InDel variants                      |
+| *_PASS.vcf                   | ../Filtered/      | Strelka and Mutect2 PASS filtered SNV's and InDel variants    |
+| *_shared.snvs & indel.vcf    | ../Filtered/      | Intersected results for Mutect/Strelka                        |
+| *_pon.snvs & indel.vcf       | ../Filtered/      | Customized filtering for Panel of Normal samples              |
+| *.filtered.vcf               | ../snvs_Filtered/ | FiNGS filtered SNV's                                          |
+| *.plots.pdf                  | ../snvs_Filtered/ | FiNGS report                                                  |
+ 
 
 
 ## FASTQ processing
 All paired-end reads are assesed on read quality and multiple sequencing runs are merged before trimming 
 [cutadapt](https://cutadapt.readthedocs.io/en/stable/) is used to find and remove adapter sequences, primers and poly-A tails. 
+
+## FASTQC 
+[fastqc](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/), [Picard CollectWgsMetrics](https://gatk.broadinstitute.org/hc/en-us/articles/360037269351-CollectWgsMetrics-Picard) and [Picard CollectAlignmentSummaryMetrics](https://gatk.broadinstitute.org/hc/en-us/articles/360040507751-CollectAlignmentSummaryMetrics-Picard) produce reports that can be combined by running:
+
+`multiqc ./FASTQC/`
+
 
 ## MAPPING processing
 All reads are mapped against 

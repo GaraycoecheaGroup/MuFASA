@@ -2,7 +2,7 @@ process BWAMapping {
     
     label 'bwa_label'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    publishDir params.mapping_dir, mode: 'copy'
+    //publishDir params.mapping_dir, mode: 'copy'
     conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
     errorStrategy 'finish'
 
