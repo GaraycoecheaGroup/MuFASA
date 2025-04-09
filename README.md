@@ -35,20 +35,21 @@ If your installation is correct, you will be able to run this data set by runnin
 
 ### workflow output
 
-|   File                       |   location        |   output                                                      | 
-|------------------------------|-------------------|---------------------------------------------------------------|
-| *.fastqc.html                | ../FASTQC/        | Quality control checks on raw sequence data                   |
-| *_collect_align_metrics.txt  | ../FASTQC/        | Quality metrics for illimina read alignments                  |
-| *_collect_wgs_metrics.txt    | ../FASTQC/        | Metrics about coverage and performance of (WGS) mapping       |
-| *_samtools_markdup.(bam/bai) | ../MAPPING/       | Read mapping output                                           |
-| *.somatic.snvs & indel.vcf   | ../Strelka/       | Strelka somatic SNV's  and InDel variants                     |
-| *_Mutect.snvs & indel.vcf    | ../Mutect/        | Mutect2 somatic SNV's and InDel variants                      |
-| *_PASS.vcf                   | ../Filtered/      | Strelka and Mutect2 PASS filtered SNV's and InDel variants    |
-| *_shared.snvs & indel.vcf    | ../Filtered/      | Intersected results for Mutect/Strelka                        |
-| *_pon.snvs & indel.vcf       | ../Filtered/      | Customized filtering for Panel of Normal samples              |
-| *.filtered.vcf               | ../snvs_Filtered/ | FiNGS filtered SNV's                                          |
-| *.plots.pdf                  | ../snvs_Filtered/ | FiNGS report                                                  |
- 
+| File                                | location        | output                                                        | 
+|-------------------------------------|-----------------|---------------------------------------------------------------|
+| sampleID.fastqc.html                | FASTQC/         | Quality control checks on raw sequence data                   |
+| sampleID_collect_align_metrics.txt  | FASTQC/         | Quality metrics for illumina read alignments                  |
+| sampleID_collect_wgs_metrics.txt    | FASTQC/         | Metrics about coverage and performance of (WGS) mapping       |
+| sampleID_samtools_markdup.(bam/bai) | MAPPING/        | Read mapping output                                           |
+| sampleID.somatic.snvs & indel.vcf   | Strelka/        | Strelka somatic SNV's  and InDel variants                     |
+| sampleID_Mutect.snvs & indel.vcf    | Mutect/         | Mutect2 somatic SNV's and InDel variants                      |
+| sampleID_PASS.vcf                   | Filtered/       | Strelka and Mutect2 PASS filtered SNV's and InDel variants    |
+| sampleID_shared.snvs & indel.vcf    | Filtered/       | Intersected results for Mutect/Strelka                        |
+| sampleID_pon.snvs & indel.vcf       | Filtered/       | Customized filtering for Panel of Normal samples              |
+| sampleID.filtered.vcf               | snvs_Filtered/  | FiNGS filtered SNV's                                          |
+| sampleID.plots.pdf                  | snvs_Filtered/  | FiNGS report                                                  |
+| sampleID.vaf.vcf                    | snvs_Filtered/  | SNV's filtered on Variant Allelic Frequency (VAF)             |
+| sampleID.AF.vcf                     | indel_Filtered/ | InDels final filtered output file. (filters defined in script)|
 
 
 ## FASTQ processing
@@ -62,12 +63,15 @@ All paired-end reads are assesed on read quality and multiple sequencing runs ar
 
 
 ## MAPPING processing
-All reads are mapped against 
-
+All reads are mapped against the whole genome reference defined in the resources.config.
 
 ## Variant Calling
+[Strelka](https://github.com/Illumina/strelka) and [Mutect2](https://gatk.broadinstitute.org/hc/en-us/articles/360037269791-Mutect2-BETA) are used for variant calling. Somatic SNV's and InDels that are shared between both callers are PASSED.
 
 ## Variant Filtering
+SNV's and InDels are filtered on quality and additional custimized filters.
 
-[^]: Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair
 
+[^1]: Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair
+[^2]: Kim, S., Scheffler, K. et al. (2018) Strelka2: fast and accurate calling of germline and somatic variants. Nature Methods, 15, 591-594. 
+[^3]: Wardell CP, Ashby C, Bauer MA. FiNGS: high quality somatic mutations using filters for next generation sequencing. BMC Bioinformatics. 2021;22(1):77. Published 2021 Feb 18. doi:10.1186/s12859-021-03995-y
