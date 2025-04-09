@@ -72,6 +72,7 @@ All reads are mapped against the whole genome reference defined in the resources
 SNV's and InDels are filtered on quality and additional custimized filters.
 
 
-[^1]: Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair
-[^2]: Kim, S., Scheffler, K. et al. (2018) Strelka2: fast and accurate calling of germline and somatic variants. Nature Methods, 15, 591-594. 
-[^3]: Wardell CP, Ashby C, Bauer MA. FiNGS: high quality somatic mutations using filters for next generation sequencing. BMC Bioinformatics. 2021;22(1):77. Published 2021 Feb 18. doi:10.1186/s12859-021-03995-y
+__Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair__
+
+_Kim, S., Scheffler, K. et al. (2018) Strelka2: fast and accurate calling of germline and somatic variants. Nature Methods, 15, 591-594._
+_Wardell CP, Ashby C, Bauer MA. FiNGS: high quality somatic mutations using filters for next generation sequencing. BMC Bioinformatics. 2021;22(1):77. Published 2021 Feb 18. doi:10.1186/s12859-021-03995-y_
