@@ -71,7 +71,7 @@ Somatic SNV's and InDels that are shared between both callers are PASSED.
 ## Variant Filtering
 SNV's and InDels are filtered on quality and additional custimized filters.
 
-## Citing StReSSMan
+## Citing MuFASA
 For more information and if you use MuFASA in your work, please cite:
 
  __Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair__
