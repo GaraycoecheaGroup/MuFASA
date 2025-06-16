@@ -1,5 +1,5 @@
-# StReSSMAn
-Short read sequencing Somatic Mutation Analysis and Filtering.  
+# MuFASA
+Mutation Filtering and Analysis of Somatic Alterations.  
 This pipeline will map small sequencing reads to a publicly available reference genome with bwa-mem. After mapping, small somatic variants are called with Strelka and Mutect2. SNV's and INDELs are filtered on quality by several filters.
 
 # Installation Guide
@@ -72,7 +72,7 @@ Somatic SNV's and InDels that are shared between both callers are PASSED.
 SNV's and InDels are filtered on quality and additional custimized filters.
 
 ## Citing StReSSMan
-For more information and if you use StReSSMan in your work, please cite:
+For more information and if you use MuFASA in your work, please cite:
 
  __Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair__
 
