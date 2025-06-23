@@ -18,10 +18,11 @@ workflow {
 	merge_input = pair1.concat(pair2).map{ it -> [it[0],it[1],it[2][0]]}
 
 	// ------------FASTQ processing
-	MergeFastq(merge_input)
-	FastQC(MergeFastq.out) 
+	MergeFastq(merge_input) 
 	merge_paired = MergeFastq.out.groupTuple(by:0)
 	CUTadapt(merge_paired)
+	fastqc_input = CUTadapt.out.flatMap{ sample_id, file_list -> file_list}
+	FastQC(fastqc_input)
 
 	// --------------MAPPING-------------------
 	BWAMapping(CUTadapt.out) 

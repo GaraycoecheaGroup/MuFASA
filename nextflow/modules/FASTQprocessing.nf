@@ -20,15 +20,15 @@ process MergeFastq {
 
 process FastQC {
     label 'FastQC_label'
-	conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
     errorStrategy 'ignore'
 
     input:
-        tuple val(sample_id), path(fastq)
+        val trimmed_file
 
     script:
     """
-    fastqc -t ${task.cpus} -o ${params.fastqc_path} ${fastq}
+    fastqc -t ${task.cpus} -o ${params.fastqc_path} $trimmed_file
 
     """
 }
