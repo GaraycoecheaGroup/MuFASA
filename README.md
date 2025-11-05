@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17531746.svg)](https://doi.org/10.5281/zenodo.17531746)
+
 # MuFASA
 Mutation Filtering and Analysis of Somatic Alterations.  
 This pipeline will map small sequencing reads to a publicly available reference genome with bwa-mem. After mapping, small somatic variants are called with Strelka and Mutect2. SNV's and INDELs are filtered on quality by several filters.
