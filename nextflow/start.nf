@@ -1,10 +1,10 @@
 
-include { MergeFastq; FastQC; CUTadapt} from './modules/FASTQprocessing.nf'
-include { BWAMapping; Samtools_index; Samtools_sort; Samtools_fixmate; Picard_cleansam; Samtools_markdup } from './modules/Mapping.nf'
-include { WgsMetrics; AlignmentSummary; PlotVAF } from './modules/Statistics.nf'
-include { preVariantCalling; add_indel_snvs_tags; defineOrderISEC } from './modules/processing.nf'
-include { Strelka; handleStrelka; Mutect2; Mutect2_flag; Mutect2_concat } from './modules/VariantCalling.nf'
-include { PASSfilter; ISEC_overlap; PoN_filter; FiNGS; snvsVAF; handleFings; indelFiltering } from './modules/VariantFiltering.nf'
+include { MergeFastq; FastQC; CUTadapt} from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/FASTQprocessing.nf'
+include { BWAMapping; Samtools_index; Samtools_sort; Samtools_fixmate; Picard_cleansam; Samtools_markdup } from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/Mapping.nf'
+include { WgsMetrics; AlignmentSummary; PlotVAF } from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/Statistics.nf'
+include { preVariantCalling; add_indel_snvs_tags; defineOrderISEC } from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/processing.nf'
+include { Strelka; handleStrelka; Mutect2; Mutect2_flag; Mutect2_concat; Manta; Gridss_extract; Gridss_index; Gridss } from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/VariantCalling.nf'
+include { PASSfilter; ISEC_overlap; PoN_filter; FiNGS; snvsVAF; handleFings; indelFiltering; Manta_pass; Manta_encode; Manta_filtering; Gridss_filter;  GridssManta_validate} from '/groups/group-garaycoechea/software/MuFASA/nextflow/modules/VariantFiltering.nf'
 
 workflow {
 	main:
@@ -106,4 +106,26 @@ workflow {
 
 	pon_indels = PoN_filter.out.filter{ it.contains("indel")}
 	indelFiltering(pon_indels)
+
+	// ------------ MANTA Structural Variant Calling ------
+
+	Manta(mutect_input)
+	Manta_pass(Manta.out)
+	Manta_encode(Manta_pass.out)	
+	manta_out = Manta_filtering(Manta_encode.out)
+
+	// ----------- Gridss Structural Variant Calling ------
+
+	gridss_input = mutect_input.combine(manta_out,by:0).map{ it -> [it[0],it[2],it[4],it[7]]}
+    Gridss_extract(gridss_input)
+    region_index = Gridss_index(Gridss_extract.out)
+    gridss_in = mutect_input.combine(region_index,by:0).map{ it -> [it[0],it[1],it[6],it[3],it[7],it[5]]}//.view()
+    Gridss(gridss_in)  
+    Gridss_filter(Gridss.out)
+    input_intersect = Gridss_filter.out.combine(manta_out,by:0).map{ it -> [it[0],it[1],it[2]]} // -> id. gridss, manta
+
+	// ---------- Intersect Manta & Gridss output ------
+
+    GridssManta_validate(input_intersect)
+
 }

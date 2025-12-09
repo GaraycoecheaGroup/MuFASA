@@ -2,8 +2,7 @@ process BWAMapping {
     
     label 'bwa_label'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    //publishDir params.mapping_dir, mode: 'copy'
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
     errorStrategy 'finish'
 
     input:
@@ -24,7 +23,7 @@ samtools view -b --threads ${task.cpus} -o ${sample_id}.bam
 process Picard_cleansam {
     label 'picard_cleansam'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/samtools_picard'
+    conda '/groups/group-garaycoechea/linda/envs/samtools_picard'
     errorStrategy 'finish'
 
     input:
@@ -43,7 +42,7 @@ process Picard_cleansam {
 process Samtools_fixmate {
     label 'samtools_fixmate'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/samtools_picard'
+    conda '/groups/group-garaycoechea/linda/envs/samtools_picard'
     errorStrategy 'finish'
 
     input:
@@ -62,7 +61,7 @@ process Samtools_sort {
 
     label 'samtools_sort'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/samtools_picard'
+    conda '/groups/group-garaycoechea/linda/envs/samtools_picard'
     errorStrategy 'finish'
 
     input:
@@ -83,7 +82,7 @@ process Samtools_sort {
 process Samtools_markdup {
     label 'samtools_markdup'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/samtools_picard'
+    conda '/groups/group-garaycoechea/linda/envs/samtools_picard'
     publishDir params.mapping_dir, mode: 'copy'
     errorStrategy 'finish'
     
@@ -102,7 +101,7 @@ process Samtools_markdup {
 process Samtools_index {
     label 'samtools_index'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/samtools_picard'
+    conda '/groups/group-garaycoechea/linda/envs/samtools_picard'
     publishDir params.mapping_dir, mode: 'copy'
     errorStrategy 'finish'
     

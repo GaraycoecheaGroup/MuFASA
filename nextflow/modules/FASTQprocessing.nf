@@ -1,7 +1,7 @@
 process MergeFastq {
 
     label 'merge_label'
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
     publishDir params.merged_dir
 
     input:
@@ -20,7 +20,7 @@ process MergeFastq {
 
 process FastQC {
     label 'FastQC_label'
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
     errorStrategy 'ignore'
 
     input:
@@ -36,7 +36,7 @@ process FastQC {
 process CUTadapt {
     label 'cutadapt'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
 
     input:
         tuple(val(sample_id), path(fastq))

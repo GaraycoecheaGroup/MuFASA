@@ -1,8 +1,9 @@
 process PASSfilter {
-  label 'merge_label'
+  label 'mutect_flag'
   shell = ['/bin/bash', '-euo', 'pipefail']
-  conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+  conda '/groups/group-garaycoechea/linda/envs/pipeline'
   publishDir "${params.filtered_dir}"  
+  executor 'slurm'
 
   input:
     tuple(val(sample_id), path(raw_vcf), val(tool), val(type)) //-> change to path..
@@ -21,9 +22,9 @@ process PASSfilter {
 process ISEC_overlap {
     label 'isec_overlap'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
     publishDir "${params.filtered_dir}"  
-    //executor 'local'
+    executor 'slurm'
 
     input:
       tuple(val(sample_id),path(strelka),path(strelka_index),path(mutect), path(mutect_index), val(type))
@@ -41,8 +42,9 @@ process ISEC_overlap {
 process PoN_filter {
     label 'isec_overlap'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
-    publishDir "${params.filtered_dir}" 
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
+    publishDir "${params.filtered_dir}"  
+    executor 'slurm'
 
     input:
       tuple(val(sample_id),path(shared),val(type))
@@ -66,8 +68,9 @@ process PoN_filter {
 process FiNGS {
     label 'fings'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/fings'
-    publishDir "${params.snvs_filtered}" 
+    conda '/groups/group-garaycoechea/linda/envs/fings'
+    publishDir "${params.snvs_filtered}"  
+    executor 'slurm'
 
     input:
          tuple(val(sample_id),path(pon),path(tumorbam),path(tumorbai),path(normalbam), path(normalbai))
@@ -83,11 +86,11 @@ process FiNGS {
 }
 
 process handleFings {
-    label 'plot_vaf'
+    label 'copy'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/envs/pipeline'
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
     publishDir "${params.snvs_filtered}"  
-    //executor 'local'
+    executor 'local'
 
     input:
         val(sample_id)
@@ -105,9 +108,9 @@ process handleFings {
 process snvsVAF {
     label 'vaf'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/pipeline'
-    publishDir "${params.snvs_filtered}"  
-    //executor 'local'
+    conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
+    publishDir "${params.snvs_filtered}", mode: 'copy'
+    executor 'local'
 
     input:
          val(sample_id)
@@ -125,8 +128,9 @@ process snvsVAF {
 process indelFiltering {
     label 'indel'
     shell = ['/bin/bash', '-euo', 'pipefail']
-    conda '/hpc/hub_garayco/software/miniconda3/pipeline'
-    publishDir "${params.indel_filtered}" 
+    conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
+    publishDir "${params.indel_filtered}"  
+    executor 'local'
 
     input:
         tuple val(sample_id),path(pon),val(type) 
@@ -141,9 +145,118 @@ process indelFiltering {
       """
 
 }
+//  output gridss tuple( val(tumor_sample_id), path("${tumor_sample_id}.gridss.vcf.gz"), path("${tumor_sample_id}.gridss.vcf.gz.tbi"))
+// conda activate Renv
+// Rscript --vanilla gridss_somatic_filter.R --ref BSgenome.Hsapiens.UCSC.hg38 --input M1R7_FU3_C3.gridss.driver.vcf --output out.vcf --plotdir . --scriptdir .  
+// zcat out.vcf.bgz > out.vcf
+//[JG0163m, /groups/group-garaycoechea/linda/MuFASA/SBS17_Human_diploid/nextflow/work/3f/9d6c6ee70a4dbd02128ea819581c7e/JG0163m.gridss.vcf.gz, /groups/group-garaycoechea/linda/MuFASA/SBS17_Human_diploid/nextflow/work/3f/9d6c6ee70a4dbd02128ea819581c7e/JG0163m.gridss.vcf.gz.tbi]
+process Gridss_filter {
+    label 'gridss_filter'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/miniforge3/envs/Renv'
+    //publishDir "${params.gridss}", mode: 'copy'  
+    executor 'slurm'
+    //errorStrategy 'ignore'
+
+    input:
+        tuple val(sample_id), path(input) 
+
+    output:
+        tuple val(sample_id),path("${sample_id}.somatic.filter.vcf.bgz")
+
+    script:
+      """
+      Rscript --vanilla ${params.script_dir}/gridss_filter/gridss_somatic_filter_LB.R --ref ${params.gridss_ref} --input ${input} --output ${sample_id}.somatic.filter.vcf --plotdir ${params.gridss} --scriptdir ${params.script_dir}/gridss_filter/  
+
+      """
+}
+
+process GridssManta_validate {
+    label 'indel'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
+    publishDir "${params.structural}", mode: 'copy' 
+    executor 'slurm'
+
+    input:
+        tuple val(sample_id), path(gridss), path(manta) 
+
+    output:
+        tuple val(sample_id), 
+        path("${sample_id}.gridss_manta_unmatched.bed"),
+        path("${sample_id}.all_structural_overlap.tsv"),
+        path("${sample_id}.final.bedpe"),
+        path("${sample_id}.StructuralVariants.csv")
+
+    script:
+      """
+      zcat ${gridss} > ${sample_id}.gridss.filtered.vcf
+      python ${params.script_dir}/Validate_Manta_Gridss_intersect.py ${sample_id} ${manta} ${sample_id}.gridss.filtered.vcf
+
+      """
 
 
+}
 
 
+process Manta_pass {
+    label 'pass'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
+    publishDir "${params.manta}"
+    executor 'slurm'
 
+    input:
+        val(tumor_id)
+    output:
+        tuple val(tumor_id), path("${tumor_id}.Manta_somaticSV.PASS.vcf")
+
+    script:
+      """
+      bcftools view --threads ${task.cpus} -O v -o ${tumor_id}.Manta_somaticSV.PASS.vcf -f PASS ${params.manta}/${tumor_id}_runworkflow/results/variants/somaticSV.vcf.gz
+
+      """
+}
+
+process Manta_encode {
+    label 'pass'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
+    publishDir "${params.manta}"
+    executor 'slurm'
+
+    input:
+        tuple val(tumor_id), path(input)
+
+    output:
+        tuple val(tumor_id), path("${tumor_id}.Manta.bl.filtered.vcf")
+
+    script:
+      """
+      bcftools view --threads ${task.cpus} -T ^${params.blacklist} -O v -o ${tumor_id}.Manta.bl.filtered.vcf ${input}
+      """
+}
+
+process Manta_filtering {
+    label 'indel'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
+    publishDir "${params.structural}", mode: 'copy'
+    //  publishDir "${params.manta}"
+    executor 'slurm'
+
+    input:
+        tuple val(sample_id), path(bl_input) 
+
+    output:
+        tuple val(sample_id), path("${sample_id}.Manta.filtered.vcf") , path("${sample_id}.Manta.regions.bed")
+
+    script:
+      def chrs = params.chrs.join(',')
+      """
+      python ${params.script_dir}/Manta_filtering.py ${bl_input} ${sample_id} ${chrs}
+
+      """
+
+}
 

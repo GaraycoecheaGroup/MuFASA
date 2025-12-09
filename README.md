@@ -73,6 +73,12 @@ Somatic SNV's and InDels that are shared between both callers are PASSED.
 ## Variant Filtering
 SNV's and InDels are filtered on quality and additional custimized filters.
 
+## Structural Variant Calling
+
+Structural Variants are called with Manta and Gridss. 
+Results are filtered on PASS and encode blacklists and variants called by both Manta and Gridss are presented as output in .bedpe and .vcf format
+
+
 ## Citing MuFASA
 For more information and if you use MuFASA in your work, please cite:
 
