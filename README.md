@@ -82,7 +82,7 @@ Results are filtered on PASS and encode blacklists and variants called by both M
 ## Citing MuFASA
 For more information and if you use MuFASA in your work, please cite:
 
- __Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polk and DNA repair__
+ __Jiang, Y., Przybilla, M., Bakker, L. et al. Tissue-specific mutagenesis from endogenous guanine damage is suppressed by Polκ and DNA repair. Nat Commun 17, 436 (2026). https://doi.org/10.1038/s41467-025-67072-1__
 
 ## References
 
