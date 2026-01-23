@@ -2,7 +2,7 @@ process PASSfilter {
   label 'mutect_flag'
   shell = ['/bin/bash', '-euo', 'pipefail']
   conda '/groups/group-garaycoechea/linda/envs/pipeline'
-  publishDir "${params.filtered_dir}"  
+  publishDir "${params.filtered_dir}", mode: 'copy'  
   executor 'slurm'
 
   input:
@@ -23,7 +23,7 @@ process ISEC_overlap {
     label 'isec_overlap'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/pipeline'
-    publishDir "${params.filtered_dir}"  
+    publishDir "${params.filtered_dir}", mode: 'copy'
     executor 'slurm'
 
     input:
@@ -43,7 +43,7 @@ process PoN_filter {
     label 'isec_overlap'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/pipeline'
-    publishDir "${params.filtered_dir}"  
+    publishDir "${params.filtered_dir}", mode: 'copy'
     executor 'slurm'
 
     input:
@@ -69,7 +69,7 @@ process FiNGS {
     label 'fings'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/fings'
-    publishDir "${params.snvs_filtered}"  
+    publishDir "${params.snvs_filtered}", mode: 'copy'
     executor 'slurm'
 
     input:
@@ -89,7 +89,7 @@ process handleFings {
     label 'copy'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/pipeline'
-    publishDir "${params.snvs_filtered}"  
+    publishDir "${params.snvs_filtered}", mode: 'copy'
     executor 'local'
 
     input:
@@ -99,7 +99,7 @@ process handleFings {
         val(sample_id)
 
     script:
-      """ 
+      """
         cp ${params.snvs_filtered}/${sample_id}_fings/*.filtered.vcf ${params.snvs_filtered}/${sample_id}_fings.vcf
         cp ${params.snvs_filtered}/${sample_id}_fings/plots.pdf ${params.pdf_path}/${sample_id}_fings.pdf
       """
@@ -129,7 +129,7 @@ process indelFiltering {
     label 'indel'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
-    publishDir "${params.indel_filtered}"  
+    publishDir "${params.indel_filtered}", mode: 'copy'
     executor 'local'
 
     input:
@@ -175,7 +175,7 @@ process GridssManta_validate {
     label 'indel'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
-    publishDir "${params.structural}", mode: 'copy' 
+    publishDir "${params.structural}", mode: 'copy'
     executor 'slurm'
 
     input:
@@ -186,7 +186,8 @@ process GridssManta_validate {
         path("${sample_id}.gridss_manta_unmatched.bed"),
         path("${sample_id}.all_structural_overlap.tsv"),
         path("${sample_id}.final.bedpe"),
-        path("${sample_id}.StructuralVariants.csv")
+        path("${sample_id}.StructuralVariants.csv"),
+        path("${sample_id}.structural.final.vcf")
 
     script:
       """

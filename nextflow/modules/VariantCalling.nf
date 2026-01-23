@@ -3,7 +3,7 @@ process Strelka {
     label 'strelka'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/strelka'
-    publishDir "${params.strelka}"
+    publishDir "${params.strelka}", mode: 'copy'
     executor 'slurm'
 
     input:
@@ -24,7 +24,7 @@ process handleStrelka {
     label 'mutect_flag'
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/linda/envs/pipeline'
-    publishDir "${params.strelka}"  
+    publishDir "${params.strelka}", mode: 'copy'
     executor 'slurm'
 
   input:
@@ -66,7 +66,7 @@ process Mutect2_flag {
   label 'mutect_flag'
   shell = ['/bin/bash', '-euo', 'pipefail']
   conda '/groups/group-garaycoechea/linda/envs/gatk4'
-  publishDir "${params.mutect}"  
+  publishDir "${params.mutect}", mode: 'copy'
   executor 'slurm'
 
   input:
@@ -85,7 +85,7 @@ process Mutect2_concat {
   label 'mutect_flag'
   shell = ['/bin/bash', '-euo', 'pipefail']
   conda '/groups/group-garaycoechea/linda/envs/pipeline'
-  publishDir "${params.mutect}"  
+  publishDir "${params.mutect}", mode: 'copy'
   executor 'slurm'
 
   input:
