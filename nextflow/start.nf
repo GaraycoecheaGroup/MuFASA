@@ -44,12 +44,16 @@ workflow {
 			.fromPath(params.strelka_conf)
 			.splitCsv()//.view()
 
+	// ######################################################
 	// if normal is NOT in the mapped set:
-	//extNormal = Channel
-	//		.fromPath(params.ext_bam_conf)
-	//		.splitCsv()
+	// extNormal = Channel
+	// 		.fromPath(params.ext_bam_conf)
+	// 		.splitCsv()
 
-	//bamindexed = bam_indexed.concat(extNormal)//.view()  
+	// bamindexed = bam_indexed.concat(extNormal)//.view()
+	// CHANGE BELOW bam_indexed to bamindexed. or change this variable name above
+	// ###################################################
+
 	paired = bam_indexed.combine(sample_pairs,by:0).groupTuple(by: 4, size: 2)//.view()
 	//ensure correct order: tumor normal
 	ordered_paired = preVariantCalling(paired)
@@ -58,9 +62,17 @@ workflow {
 	strelka_input = ordered_paired.map{ it -> [it[0][0],it[1][0],it[1][1],it[2][0],it[2][1]]}
 	Strelka(strelka_input)
 	strelka_out = handleStrelka(Strelka.out)
-
+	
 	// MUTECT //
 	mutect_input = ordered_paired.map{ it -> [it[0][0],it[0][1],it[1][0],it[1][1]]}
+	
+	//
+	// println('ORDERED PAIRED HERE:')
+	// ordered_paired.view()
+
+	// println('MUTECT INPUT HERE:')
+	// mutect_input.view()
+	//
 
 	mut_paired = mutect_input.combine(chrs)
 	Mutect2(mut_paired) //--> TO DO: seperate this, so Chr1, Chr2 are done with different time limit

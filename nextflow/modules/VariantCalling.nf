@@ -57,7 +57,7 @@ process Mutect2 {
 
   script:
       """
-      gatk Mutect2 --native-pair-hmm-threads 4 -R ${params.ref} --callable-depth ${params.callable_depth} -I ${tumor_bam} -normal ${normalid} -I ${normal_bam} -L chr${chrID} -O ${tumorid}_${chrID}.vcf.gz
+      gatk Mutect2 --native-pair-hmm-threads 4 -R ${params.ref} --callable-depth ${params.callable_depth} --max-mnp-distance 0 -I ${tumor_bam} -normal ${normalid} -I ${normal_bam} -L chr${chrID} -O ${tumorid}_${chrID}.vcf.gz
       """
 }
 

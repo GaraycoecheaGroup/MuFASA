@@ -80,6 +80,7 @@ process FiNGS {
 
     script:
       """
+        echo "force rerun"
         fings -j ${task.cpus} --overwrite -r ${params.ref} -p ${params.fings} -n ${normalbam} -t ${tumorbam} -v ${pon} -d ${params.snvs_filtered}/${sample_id}_fings/ --PASSonlyin --PASSonlyout
 
       """
@@ -177,6 +178,7 @@ process GridssManta_validate {
     conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
     publishDir "${params.structural}", mode: 'copy'
     executor 'slurm'
+    errorStrategy 'ignore' // ignore because it errors of one of the vcfs is empty
 
     input:
         tuple val(sample_id), path(gridss), path(manta) 
@@ -195,7 +197,6 @@ process GridssManta_validate {
       python ${params.script_dir}/Validate_Manta_Gridss_intersect.py ${sample_id} ${manta} ${sample_id}.gridss.filtered.vcf
 
       """
-
 
 }
 
@@ -256,6 +257,37 @@ process Manta_filtering {
       def chrs = params.chrs.join(',')
       """
       python ${params.script_dir}/Manta_filtering.py ${bl_input} ${sample_id} ${chrs}
+
+      """
+
+}
+
+
+process Concat_variants {
+    label 'indel'
+    shell = ['/bin/bash', '-euo', 'pipefail']
+    conda '/groups/group-garaycoechea/linda/envs/pipeline'
+    errorStrategy 'ignore'
+    publishDir "${params.snvs_filtered}", mode: 'copy'
+    //  publishDir "${params.manta}"
+    executor 'slurm'
+
+    input:
+        tuple val(sample_id), path(id_final), path(snv_final) 
+
+    output:
+        tuple val(sample_id), path("${sample_id}.concatenated.vcf")
+
+    script:
+      
+      """
+      bgzip -c ${id_final} > ${id_final}.gz
+      bgzip -c ${snv_final} > ${snv_final}.gz
+
+      bcftools index ${id_final}.gz
+      bcftools index ${snv_final}.gz
+      
+      bcftools concat -a -Ov -o ${sample_id}.concatenated.vcf ${id_final}.gz ${snv_final}.gz
 
       """
 

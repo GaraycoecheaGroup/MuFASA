@@ -104,6 +104,7 @@ process PlotVAF {
 
 process VariantCounts {
     label 'plot_vaf'
+    cache false
     shell = ['/bin/bash', '-euo', 'pipefail']
     conda '/groups/group-garaycoechea/miniforge3/envs/scripts'
     errorStrategy 'ignore'
@@ -112,12 +113,11 @@ process VariantCounts {
     input:
         val(sample_id)
 
-    output:
-        path("counts.tsv")
-
     script:
         """
         cd ${params.project_dir}
+        > counts.tsv
+        chmod +x ${params.script_dir}/count_one_sample.sh
         ${params.script_dir}/count_one_sample.sh ${sample_id}
         """
 }

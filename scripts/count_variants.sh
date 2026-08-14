@@ -6,8 +6,10 @@
 echo -e "SampleID\tPASS\tpon_snvs\tfings\tvaf\tPASS_indel\tpon_indel\tADD\tVAF\t"
 # Get unique sample IDs from all .vcf files in snvs_Filtered and Filtered
 sample_ids=$(find snvs_Filtered Filtered indel_Filtered -maxdepth 1 -type f -name "*.vcf" -printf "%f\n" \
-  | sed -E 's/(_fings|\.vaf|_shared_snvs|_shared_indel|_pon_indel|_pon_snvs|\.RF|\.AF)\.vcf$//' \
+  | sed -E 's/(_fings|\.vaf|_shared_snvs|_shared_indel|_pon_indel|_pon_snvs|\.RF|\.AF|\.SBtolerant|\.NoAlt|\.SBzero)\.vcf$//' \
   | sort -u)
+
+# echo $sample_ids
 
 # Count function
 count_or_na() {

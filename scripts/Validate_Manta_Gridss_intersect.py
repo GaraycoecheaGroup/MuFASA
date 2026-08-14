@@ -178,6 +178,7 @@ def write_to_bedpe(overlap_df,sample):
                 end2 = group["manta_pos"].iloc[1]
             else:
                 count=+1
+                continue
                 
         svclass = sv_type_mapping.get(svtype)
         bedpe_rows.append([
@@ -192,7 +193,7 @@ def write_to_bedpe(overlap_df,sample):
             "chrom2", "start2", "end2", "svclass", "event"
         ]
     )
-    print(f"for {sample}, {count} translocations are described with more than 1 breakpoint, they are excluded from the bedpe")
+    print(f"for {sample}, {count} translocations are described with only 1 or more than 2 BND rows per manta event, they are excluded from the bedpe")
     bedpe_df.to_csv(f"{sample}.final.bedpe", sep="\t", index=False)
     return
 
